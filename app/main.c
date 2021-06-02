@@ -14,7 +14,7 @@
  * @param argv [传入的参数列表]
  * @return int [无]
  */
-int main(int argc, char *argv[])
+int main (int argc, char* argv[])
 {
     argc = argc;
     argv = argv;

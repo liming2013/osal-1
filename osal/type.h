@@ -28,43 +28,43 @@ typedef signed short        int16;
 typedef signed int          int32;
 
 #ifndef FALSE
-#define FALSE       0
+    #define FALSE       0
 #endif
 
 #ifndef ARRAY_NULL
-#define ARRAY_NULL '\0'
+    #define ARRAY_NULL '\0'
 #endif
 
 #ifndef TRUE
-#define TRUE       1
+    #define TRUE       1
 #endif
 
 #ifndef OPEN
-#define OPEN       1
+    #define OPEN       1
 #endif
 
 #ifndef CLOSE
-#define CLOSE      0
+    #define CLOSE      0
 #endif
 
 #ifndef NULL
-#define NULL       ((void*) 0 )
+    #define NULL       ((void*) 0 )
 #endif
 
 #ifndef HIGH
-#define HIGH       1
+    #define HIGH       1
 #endif
 
 #ifndef LOW
-#define LOW        0
+    #define LOW        0
 #endif
 
 #ifndef SUCCESS
-#define SUCCESS     1
+    #define SUCCESS     1
 #endif
 
 #ifndef ERROR
-#define ERROR       0
+    #define ERROR       0
 #endif
 
 //#define CLI()         __set_PRIMASK(1)              // Disable Interrupts

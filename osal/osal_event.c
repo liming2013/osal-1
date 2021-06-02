@@ -1,8 +1,8 @@
 #include "osal_event.h"
 #include "osal_memory.h"
 
-OsalTadkREC_t *TaskHead;
-OsalTadkREC_t *TaskActive;
+OsalTadkREC_t* TaskHead;
+OsalTadkREC_t* TaskActive;
 
 uint8 Task_id;              //任务ID统计
 uint8 tasksCnt;             //任务数量统计
@@ -20,12 +20,12 @@ uint8 tasksCnt;             //任务数量统计
  *
  * @return  ZSUCCESS, INVALID_TASK
  */
-uint8 osal_set_event(byte task_id, uint16 event_flag)
+uint8 osal_set_event (byte task_id, uint16 event_flag)
 {
-    OsalTadkREC_t *srchTask;
+    OsalTadkREC_t* srchTask;
 
-    srchTask = osalFindTask(task_id);
-    if(srchTask)
+    srchTask = osalFindTask (task_id);
+    if (srchTask)
     {
         // Hold off interrupts
         HAL_ENTER_CRITICAL_SECTION();
@@ -35,7 +35,7 @@ uint8 osal_set_event(byte task_id, uint16 event_flag)
         HAL_EXIT_CRITICAL_SECTION();
     }
     else
-        return (INVALID_TASK);
+    { return (INVALID_TASK); }
 
     return (ZSUCCESS);
 }
@@ -53,12 +53,12 @@ uint8 osal_set_event(byte task_id, uint16 event_flag)
  *
  * @return  SUCCESS, INVALID_TASK
  */
-uint8 osal_clear_event(uint8 task_id, uint16 event_flag)
+uint8 osal_clear_event (uint8 task_id, uint16 event_flag)
 {
-    OsalTadkREC_t *srchTask;
+    OsalTadkREC_t* srchTask;
 
-    srchTask = osalFindTask(task_id);
-    if(srchTask)
+    srchTask = osalFindTask (task_id);
+    if (srchTask)
     {
         // Hold off interrupts
         HAL_ENTER_CRITICAL_SECTION();
@@ -68,7 +68,7 @@ uint8 osal_clear_event(uint8 task_id, uint16 event_flag)
         HAL_EXIT_CRITICAL_SECTION();
     }
     else
-        return (INVALID_TASK);
+    { return (INVALID_TASK); }
 
     return (ZSUCCESS);
 }
@@ -82,10 +82,10 @@ uint8 osal_clear_event(uint8 task_id, uint16 event_flag)
  *
  * @return
  */
-void  osal_init_TaskHead(void)
+void  osal_init_TaskHead (void)
 {
-    TaskHead   = (OsalTadkREC_t *)NULL;
-    TaskActive = (OsalTadkREC_t *)NULL;
+    TaskHead   = (OsalTadkREC_t*) NULL;
+    TaskActive = (OsalTadkREC_t*) NULL;
     Task_id = 0;
 }
 
@@ -98,18 +98,18 @@ void  osal_init_TaskHead(void)
  *
  * @return
  */
-void osal_Task_init(void)
+void osal_Task_init (void)
 {
     TaskActive = TaskHead;
-    while(TaskActive)
+    while (TaskActive)
     {
-        if(TaskActive->pfnInit)
+        if (TaskActive->pfnInit)
         {
-            TaskActive->pfnInit(TaskActive->taskID);
+            TaskActive->pfnInit (TaskActive->taskID);
         }
         TaskActive = TaskActive->next;
     }
-    TaskActive = (OsalTadkREC_t *)NULL;
+    TaskActive = (OsalTadkREC_t*) NULL;
 }
 
 /***************************************************************************
@@ -121,31 +121,31 @@ void osal_Task_init(void)
  *
  * @return
  */
-void  osal_add_Task(pTaskInitFn pfnInit,
-                    pTaskEventHandlerFn pfnEventProcessor,
-                    uint8 taskPriority)
+void  osal_add_Task (pTaskInitFn pfnInit,
+                     pTaskEventHandlerFn pfnEventProcessor,
+                     uint8 taskPriority)
 {
-    OsalTadkREC_t  *TaskNew;
-    OsalTadkREC_t  *TaskSech;
-    OsalTadkREC_t  **TaskPTR;
-    TaskNew = osal_mem_alloc(sizeof(OsalTadkREC_t));
-    if(TaskNew)
+    OsalTadkREC_t*  TaskNew;
+    OsalTadkREC_t*  TaskSech;
+    OsalTadkREC_t**  TaskPTR;
+    TaskNew = osal_mem_alloc (sizeof (OsalTadkREC_t) );
+    if (TaskNew)
     {
         TaskNew->pfnInit = pfnInit;
         TaskNew->pfnEventProcessor = pfnEventProcessor;
         TaskNew->taskID = Task_id++;
         TaskNew->events = 0;
         TaskNew->taskPriority = taskPriority;
-        TaskNew->next = (OsalTadkREC_t *)NULL;
+        TaskNew->next = (OsalTadkREC_t*) NULL;
 
         TaskPTR = &TaskHead;
         TaskSech = TaskHead;
 
-        tasksCnt++;			//任务数量统计
+        tasksCnt++;         //任务数量统计
 
-        while(TaskSech)
+        while (TaskSech)
         {
-            if(TaskNew->taskPriority > TaskSech->taskPriority)
+            if (TaskNew->taskPriority > TaskSech->taskPriority)
             {
                 TaskNew->next = TaskSech;
                 *TaskPTR = TaskNew;
@@ -171,17 +171,17 @@ void  osal_add_Task(pTaskInitFn pfnInit,
  *
  * @return  pointer to the found task, NULL if not found
  */
-OsalTadkREC_t *osalNextActiveTask(void)
+OsalTadkREC_t* osalNextActiveTask (void)
 {
-    OsalTadkREC_t  *TaskSech;
+    OsalTadkREC_t*  TaskSech;
 
     // Start at the beginning
     TaskSech = TaskHead;
 
     // When found or not
-    while(TaskSech)
+    while (TaskSech)
     {
-        if(TaskSech->events)
+        if (TaskSech->events)
         {
             // task is highest priority that is ready
             return  TaskSech;
@@ -203,17 +203,17 @@ OsalTadkREC_t *osalNextActiveTask(void)
  *
  * @return  pointer to the found task, NULL if not found
  */
-OsalTadkREC_t *osalFindTask(uint8 taskID)
+OsalTadkREC_t* osalFindTask (uint8 taskID)
 {
-    OsalTadkREC_t *TaskSech;
+    OsalTadkREC_t* TaskSech;
     TaskSech = TaskHead;
-    while(TaskSech)
+    while (TaskSech)
     {
-        if(TaskSech->taskID == taskID)
+        if (TaskSech->taskID == taskID)
         {
             return (TaskSech);
         }
         TaskSech = TaskSech->next;
     }
-    return ((OsalTadkREC_t *)NULL);
+    return ( (OsalTadkREC_t*) NULL);
 }

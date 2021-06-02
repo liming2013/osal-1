@@ -18,7 +18,7 @@ osal_msg_q_t osal_qHead;
  *
  * @return  ZSUCCESS
  */
-uint8 osal_init_system(void)
+uint8 osal_init_system (void)
 {
     // Initialize the Memory Allocation System
     osal_mem_init();
@@ -51,15 +51,15 @@ uint8 osal_init_system(void)
  *
  * @return  none
  */
-void osal_start_system(void)
+void osal_start_system (void)
 {
     uint16 events;
     uint16 retEvents;
 
-    while(1)
+    while (1)
     {
         TaskActive = osalNextActiveTask();
-        if(TaskActive)
+        if (TaskActive)
         {
             HAL_ENTER_CRITICAL_SECTION();
             events = TaskActive->events;
@@ -67,12 +67,12 @@ void osal_start_system(void)
             TaskActive->events = 0;
             HAL_EXIT_CRITICAL_SECTION();
 
-            if(events != 0)
+            if (events != 0)
             {
                 // Call the task to process the event(s)
-                if(TaskActive->pfnEventProcessor)
+                if (TaskActive->pfnEventProcessor)
                 {
-                    retEvents = (TaskActive->pfnEventProcessor)(TaskActive->taskID, events);
+                    retEvents = (TaskActive->pfnEventProcessor) (TaskActive->taskID, events);
 
                     // Add back unprocessed events to the current task
                     HAL_ENTER_CRITICAL_SECTION();
@@ -96,9 +96,9 @@ void osal_start_system(void)
  *
  * @return  int - number of characters
  */
-int osal_strlen(char *pString)
+int osal_strlen (char* pString)
 {
-    return (int)(strlen(pString));
+    return (int) (strlen (pString) );
 }
 
 /*********************************************************************
@@ -118,16 +118,16 @@ int osal_strlen(char *pString)
  *
  * @return  pointer to end of destination buffer
  */
-void *osal_memcpy(void *dst, const void *src, unsigned int len)
+void* osal_memcpy (void* dst, const void* src, unsigned int len)
 {
-    uint8 *pDst;
-    const uint8 *pSrc;
+    uint8* pDst;
+    const uint8* pSrc;
 
     pSrc = src;
     pDst = dst;
 
-    while(len--)
-        *pDst++ = *pSrc++;
+    while (len--)
+    { *pDst++ = *pSrc++; }
 
     return (pDst);
 }
@@ -149,17 +149,17 @@ void *osal_memcpy(void *dst, const void *src, unsigned int len)
  *
  * @return  pointer to end of destination buffer
  */
-void *osal_revmemcpy(void *dst, const void *src, unsigned int len)
+void* osal_revmemcpy (void* dst, const void* src, unsigned int len)
 {
-    uint8 *pDst;
-    const uint8 *pSrc;
+    uint8* pDst;
+    const uint8* pSrc;
 
     pSrc = src;
     pSrc += (len - 1);
     pDst = dst;
 
-    while(len--)
-        *pDst++ = *pSrc--;
+    while (len--)
+    { *pDst++ = *pSrc--; }
 
     return (pDst);
 }
@@ -176,17 +176,17 @@ void *osal_revmemcpy(void *dst, const void *src, unsigned int len)
  * @return  pointer to the new allocated buffer, or NULL if
  *          allocation problem.
  */
-void *osal_memdup(const void *src, unsigned int len)
+void* osal_memdup (const void* src, unsigned int len)
 {
-    uint8 *pDst;
+    uint8* pDst;
 
-    pDst = osal_mem_alloc(len);
-    if(pDst)
+    pDst = osal_mem_alloc (len);
+    if (pDst)
     {
-        osal_memcpy(pDst, src, len);
+        osal_memcpy (pDst, src, len);
     }
 
-    return ((void *)pDst);
+    return ( (void*) pDst);
 }
 
 /*********************************************************************
@@ -202,18 +202,18 @@ void *osal_memdup(const void *src, unsigned int len)
  *
  * @return  TRUE - same, FALSE - different
  */
-uint8 osal_memcmp(const void *src1, const void *src2, unsigned int len)
+uint8 osal_memcmp (const void* src1, const void* src2, unsigned int len)
 {
-    const uint8 *pSrc1;
-    const uint8 *pSrc2;
+    const uint8* pSrc1;
+    const uint8* pSrc2;
 
     pSrc1 = src1;
     pSrc2 = src2;
 
-    while(len--)
+    while (len--)
     {
-        if(*pSrc1++ != *pSrc2++)
-            return FALSE;
+        if (*pSrc1++ != *pSrc2++)
+        { return FALSE; }
     }
     return TRUE;
 }
@@ -231,7 +231,7 @@ uint8 osal_memcmp(const void *src1, const void *src2, unsigned int len)
  *
  * @return  pointer to destination buffer
  */
-void *osal_memset(void *dest, uint8 value, int len)
+void* osal_memset (void* dest, uint8 value, int len)
 {
-    return memset(dest, value, len);
+    return memset (dest, value, len);
 }

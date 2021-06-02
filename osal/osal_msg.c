@@ -23,22 +23,22 @@
  * @param   uint8 len  - wanted buffer length
  * @return  pointer to allocated buffer or NULL if allocation failed.
  */
-uint8 * osal_msg_allocate(uint16 len)
+uint8* osal_msg_allocate (uint16 len)
 {
-    osal_msg_hdr_t *hdr;
+    osal_msg_hdr_t* hdr;
 
-    if(len == 0)
+    if (len == 0)
     {
         return (NULL);
     }
 
-    hdr = (osal_msg_hdr_t *) osal_mem_alloc((short)(len + sizeof(osal_msg_hdr_t)));
-    if(hdr)
+    hdr = (osal_msg_hdr_t*) osal_mem_alloc ( (short) (len + sizeof (osal_msg_hdr_t) ) );
+    if (hdr)
     {
         hdr->next = NULL;
         hdr->len = len;
         hdr->dest_id = TASK_NO_TASK;
-        return ((uint8 *)(hdr + 1));
+        return ( (uint8*) (hdr + 1) );
     }
     else
     {
@@ -60,24 +60,24 @@ uint8 * osal_msg_allocate(uint16 len)
  *
  * @return  SUCCESS, INVALID_MSG_POINTER
  */
-uint8 osal_msg_deallocate(uint8 *msg_ptr)
+uint8 osal_msg_deallocate (uint8* msg_ptr)
 {
-    uint8 *x;
+    uint8* x;
 
-    if(msg_ptr == NULL)
+    if (msg_ptr == NULL)
     {
         return (INVALID_MSG_POINTER);
     }
 
     // don't deallocate queued buffer
-    if(OSAL_MSG_ID(msg_ptr) != TASK_NO_TASK)
+    if (OSAL_MSG_ID (msg_ptr) != TASK_NO_TASK)
     {
         return (MSG_BUFFER_NOT_AVAIL);
     }
 
-    x = (uint8 *)((uint8 *)msg_ptr - sizeof(osal_msg_hdr_t));
+    x = (uint8*) ( (uint8*) msg_ptr - sizeof (osal_msg_hdr_t) );
 
-    osal_mem_free((void *)x);
+    osal_mem_free ( (void*) x);
 
     return (SUCCESS);
 }
@@ -100,34 +100,34 @@ uint8 osal_msg_deallocate(uint8 *msg_ptr)
  *
  * @return  SUCCESS, INVALID_TASK, INVALID_MSG_POINTER
  */
-uint8 osal_msg_send(uint8 destination_task, uint8 *msg_ptr)
+uint8 osal_msg_send (uint8 destination_task, uint8* msg_ptr)
 {
-    if(msg_ptr == NULL)
+    if (msg_ptr == NULL)
     {
         return (INVALID_MSG_POINTER);
     }
 
-    if(destination_task >= tasksCnt)
+    if (destination_task >= tasksCnt)
     {
-        osal_msg_deallocate(msg_ptr);
+        osal_msg_deallocate (msg_ptr);
         return (INVALID_TASK);
     }
 
     // Check the message header
-    if(OSAL_MSG_NEXT(msg_ptr) != NULL ||
-            OSAL_MSG_ID(msg_ptr) != TASK_NO_TASK)
+    if (OSAL_MSG_NEXT (msg_ptr) != NULL ||
+            OSAL_MSG_ID (msg_ptr) != TASK_NO_TASK)
     {
-        osal_msg_deallocate(msg_ptr);
+        osal_msg_deallocate (msg_ptr);
         return (INVALID_MSG_POINTER);
     }
 
-    OSAL_MSG_ID(msg_ptr) = destination_task;
+    OSAL_MSG_ID (msg_ptr) = destination_task;
 
     // queue message
-    osal_msg_enqueue(&osal_qHead, msg_ptr);
+    osal_msg_enqueue (&osal_qHead, msg_ptr);
 
     // Signal the task that a message is waiting
-    osal_set_event(destination_task, SYS_EVENT_MSG);
+    osal_set_event (destination_task, SYS_EVENT_MSG);
 
     return (SUCCESS);
 }
@@ -145,11 +145,11 @@ uint8 osal_msg_send(uint8 destination_task, uint8 *msg_ptr)
  *
  * @return  *uint8 - message information or NULL if no message
  */
-uint8 *osal_msg_receive(uint8 task_id)
+uint8* osal_msg_receive (uint8 task_id)
 {
-    osal_msg_hdr_t *listHdr;
-    osal_msg_hdr_t *prevHdr = NULL;
-    osal_msg_hdr_t *foundHdr = NULL;
+    osal_msg_hdr_t* listHdr;
+    osal_msg_hdr_t* prevHdr = NULL;
+    osal_msg_hdr_t* foundHdr = NULL;
 
 
     // Hold off interrupts
@@ -159,11 +159,11 @@ uint8 *osal_msg_receive(uint8 task_id)
     listHdr = osal_qHead;
 
     // Look through the queue for a message that belongs to the asking task
-    while(listHdr != NULL)
+    while (listHdr != NULL)
     {
-        if((listHdr - 1)->dest_id == task_id)
+        if ( (listHdr - 1)->dest_id == task_id)
         {
-            if(foundHdr == NULL)
+            if (foundHdr == NULL)
             {
                 // Save the first one
                 foundHdr = listHdr;
@@ -174,36 +174,36 @@ uint8 *osal_msg_receive(uint8 task_id)
                 break;
             }
         }
-        if(foundHdr == NULL)
+        if (foundHdr == NULL)
         {
             prevHdr = listHdr;
         }
-        listHdr = OSAL_MSG_NEXT(listHdr);
+        listHdr = OSAL_MSG_NEXT (listHdr);
     }
 
     // Is there more than one?
-    if(listHdr != NULL)
+    if (listHdr != NULL)
     {
         // Yes, Signal the task that a message is waiting
-        osal_set_event(task_id, SYS_EVENT_MSG);
+        osal_set_event (task_id, SYS_EVENT_MSG);
     }
     else
     {
         // No more
-        osal_clear_event(task_id, SYS_EVENT_MSG);
+        osal_clear_event (task_id, SYS_EVENT_MSG);
     }
 
     // Did we find a message?
-    if(foundHdr != NULL)
+    if (foundHdr != NULL)
     {
         // Take out of the link list
-        osal_msg_extract(&osal_qHead, foundHdr, prevHdr);
+        osal_msg_extract (&osal_qHead, foundHdr, prevHdr);
     }
 
     // Release interrupts
     HAL_EXIT_CRITICAL_SECTION();
 
-    return ((uint8*) foundHdr);
+    return ( (uint8*) foundHdr);
 }
 
 /**************************************************************************************************
@@ -224,9 +224,9 @@ uint8 *osal_msg_receive(uint8 task_id)
  * @return      NULL if no match, otherwise an in place pointer to the matching OSAL message.
  **************************************************************************************************
  */
-osal_event_hdr_t *osal_msg_find(uint8 task_id, uint8 event)
+osal_event_hdr_t* osal_msg_find (uint8 task_id, uint8 event)
 {
-    osal_msg_hdr_t *pHdr;
+    osal_msg_hdr_t* pHdr;
 
 
     HAL_ENTER_CRITICAL_SECTION();  // Hold off interrupts.
@@ -234,19 +234,19 @@ osal_event_hdr_t *osal_msg_find(uint8 task_id, uint8 event)
     pHdr = osal_qHead;  // Point to the top of the queue.
 
     // Look through the queue for a message that matches the task_id and event parameters.
-    while(pHdr != NULL)
+    while (pHdr != NULL)
     {
-        if(((pHdr - 1)->dest_id == task_id) && (((osal_event_hdr_t *)pHdr)->event == event))
+        if ( ( (pHdr - 1)->dest_id == task_id) && ( ( (osal_event_hdr_t*) pHdr)->event == event) )
         {
             break;
         }
 
-        pHdr = OSAL_MSG_NEXT(pHdr);
+        pHdr = OSAL_MSG_NEXT (pHdr);
     }
 
     HAL_EXIT_CRITICAL_SECTION();  // Release interrupts.
 
-    return (osal_event_hdr_t *)pHdr;
+    return (osal_event_hdr_t*) pHdr;
 }
 
 /*********************************************************************
@@ -261,27 +261,27 @@ osal_event_hdr_t *osal_msg_find(uint8 task_id, uint8 event)
  *
  * @return  none
  */
-void osal_msg_enqueue(osal_msg_q_t *q_ptr, void *msg_ptr)
+void osal_msg_enqueue (osal_msg_q_t* q_ptr, void* msg_ptr)
 {
-    void *list;
+    void* list;
 
 
     // Hold off interrupts
     HAL_ENTER_CRITICAL_SECTION();
 
-    OSAL_MSG_NEXT(msg_ptr) = NULL;
+    OSAL_MSG_NEXT (msg_ptr) = NULL;
     // If first message in queue
-    if(*q_ptr == NULL)
+    if (*q_ptr == NULL)
     {
         *q_ptr = msg_ptr;
     }
     else
     {
         // Find end of queue
-        for(list = *q_ptr; OSAL_MSG_NEXT(list) != NULL; list = OSAL_MSG_NEXT(list));
+        for (list = *q_ptr; OSAL_MSG_NEXT (list) != NULL; list = OSAL_MSG_NEXT (list) );
 
         // Add message to end of queue
-        OSAL_MSG_NEXT(list) = msg_ptr;
+        OSAL_MSG_NEXT (list) = msg_ptr;
     }
 
     // Re-enable interrupts
@@ -299,21 +299,21 @@ void osal_msg_enqueue(osal_msg_q_t *q_ptr, void *msg_ptr)
  *
  * @return  void * - pointer to OSAL message or NULL of queue is empty.
  */
-void *osal_msg_dequeue(osal_msg_q_t *q_ptr)
+void* osal_msg_dequeue (osal_msg_q_t* q_ptr)
 {
-    void *msg_ptr = NULL;
+    void* msg_ptr = NULL;
 
 
     // Hold off interrupts
     HAL_ENTER_CRITICAL_SECTION();
 
-    if(*q_ptr != NULL)
+    if (*q_ptr != NULL)
     {
         // Dequeue message
         msg_ptr = *q_ptr;
-        *q_ptr = OSAL_MSG_NEXT(msg_ptr);
-        OSAL_MSG_NEXT(msg_ptr) = NULL;
-        OSAL_MSG_ID(msg_ptr) = TASK_NO_TASK;
+        *q_ptr = OSAL_MSG_NEXT (msg_ptr);
+        OSAL_MSG_NEXT (msg_ptr) = NULL;
+        OSAL_MSG_ID (msg_ptr) = TASK_NO_TASK;
     }
 
     // Re-enable interrupts
@@ -335,13 +335,13 @@ void *osal_msg_dequeue(osal_msg_q_t *q_ptr)
  *
  * @return  none
  */
-void osal_msg_push(osal_msg_q_t *q_ptr, void *msg_ptr)
+void osal_msg_push (osal_msg_q_t* q_ptr, void* msg_ptr)
 {
     // Hold off interrupts
     HAL_ENTER_CRITICAL_SECTION();
 
     // Push message to head of queue
-    OSAL_MSG_NEXT(msg_ptr) = *q_ptr;
+    OSAL_MSG_NEXT (msg_ptr) = *q_ptr;
     *q_ptr = msg_ptr;
 
     // Re-enable interrupts
@@ -362,23 +362,23 @@ void osal_msg_push(osal_msg_q_t *q_ptr, void *msg_ptr)
  *
  * @return  none
  */
-void osal_msg_extract(osal_msg_q_t *q_ptr, void *msg_ptr, void *prev_ptr)
+void osal_msg_extract (osal_msg_q_t* q_ptr, void* msg_ptr, void* prev_ptr)
 {
     // Hold off interrupts
     HAL_ENTER_CRITICAL_SECTION();
 
-    if(msg_ptr == *q_ptr)
+    if (msg_ptr == *q_ptr)
     {
         // remove from first
-        *q_ptr = OSAL_MSG_NEXT(msg_ptr);
+        *q_ptr = OSAL_MSG_NEXT (msg_ptr);
     }
     else
     {
         // remove from middle
-        OSAL_MSG_NEXT(prev_ptr) = OSAL_MSG_NEXT(msg_ptr);
+        OSAL_MSG_NEXT (prev_ptr) = OSAL_MSG_NEXT (msg_ptr);
     }
-    OSAL_MSG_NEXT(msg_ptr) = NULL;
-    OSAL_MSG_ID(msg_ptr) = TASK_NO_TASK;
+    OSAL_MSG_NEXT (msg_ptr) = NULL;
+    OSAL_MSG_ID (msg_ptr) = TASK_NO_TASK;
 
     // Re-enable interrupts
     HAL_EXIT_CRITICAL_SECTION();
@@ -398,16 +398,16 @@ void osal_msg_extract(osal_msg_q_t *q_ptr, void *msg_ptr, void *prev_ptr)
  *
  * @return  TRUE if message was enqueued, FALSE otherwise
  */
-uint8 osal_msg_enqueue_max(osal_msg_q_t *q_ptr, void *msg_ptr, uint8 max)
+uint8 osal_msg_enqueue_max (osal_msg_q_t* q_ptr, void* msg_ptr, uint8 max)
 {
-    void *list;
+    void* list;
     uint8 ret = FALSE;
 
     // Hold off interrupts
     HAL_ENTER_CRITICAL_SECTION();
 
     // If first message in queue
-    if(*q_ptr == NULL)
+    if (*q_ptr == NULL)
     {
         *q_ptr = msg_ptr;
         ret = TRUE;
@@ -417,16 +417,16 @@ uint8 osal_msg_enqueue_max(osal_msg_q_t *q_ptr, void *msg_ptr, uint8 max)
         // Find end of queue or max
         list = *q_ptr;
         max--;
-        while((OSAL_MSG_NEXT(list) != NULL) && (max > 0))
+        while ( (OSAL_MSG_NEXT (list) != NULL) && (max > 0) )
         {
-            list = OSAL_MSG_NEXT(list);
+            list = OSAL_MSG_NEXT (list);
             max--;
         }
 
         // Add message to end of queue if max not reached
-        if(max != 0)
+        if (max != 0)
         {
-            OSAL_MSG_NEXT(list) = msg_ptr;
+            OSAL_MSG_NEXT (list) = msg_ptr;
             ret = TRUE;
         }
     }

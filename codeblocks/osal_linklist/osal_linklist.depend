@@ -1,0 +1,84 @@
+# depslib dependency file v1.0
+1622621454 source:d:\lm\test_demo\osal\app\main.c
+	"task_event.h"
+
+1622621454 d:\lm\test_demo\osal\app\task_event.h
+	"osal.h"
+	"osal_timer.h"
+	"osal_event.h"
+	"osal_memory.h"
+	"osal_msg.h"
+
+1622621454 source:d:\lm\test_demo\osal\app\osal_main.c
+	"task_event.h"
+
+1622621454 source:d:\lm\test_demo\osal\app\print_task.c
+	<string.h>
+	<stdarg.h>
+	<stdio.h>
+	"task_event.h"
+
+1622621454 source:d:\lm\test_demo\osal\app\statistics_task.c
+	<string.h>
+	<stdarg.h>
+	<stdio.h>
+	"task_event.h"
+
+1622621454 source:d:\lm\test_demo\osal\hal\timer.c
+	<stdint.h>
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<pthread.h>
+	"timer.h"
+	"osal_timer.h"
+
+1622621454 d:\lm\test_demo\osal\hal\timer.h
+	"type.h"
+
+1622621454 source:d:\lm\test_demo\osal\osal\osal.c
+	"osal.h"
+	"osal_event.h"
+	"osal_memory.h"
+	<string.h>
+
+1622621454 d:\lm\test_demo\osal\osal\osal.h
+	"type.h"
+
+1622621454 d:\lm\test_demo\osal\osal\type.h
+
+1622621454 d:\lm\test_demo\osal\osal\osal_event.h
+	"type.h"
+	"osal_timer.h"
+
+1622621454 d:\lm\test_demo\osal\osal\osal_timer.h
+	"type.h"
+	"timer.h"
+
+1622621454 d:\lm\test_demo\osal\osal\osal_memory.h
+	"type.h"
+
+1622621454 source:d:\lm\test_demo\osal\osal\osal_event.c
+	"osal_event.h"
+	"osal_memory.h"
+
+1622621454 source:d:\lm\test_demo\osal\osal\osal_memory.c
+	"osal_memory.h"
+	"type.h"
+
+1622621454 source:d:\lm\test_demo\osal\osal\osal_msg.c
+	"osal_msg.h"
+	"osal_memory.h"
+	"osal_event.h"
+
+1622621454 d:\lm\test_demo\osal\osal\osal_msg.h
+	"osal.h"
+	"type.h"
+
+1622621454 source:d:\lm\test_demo\osal\osal\osal_timer.c
+	"osal_timer.h"
+	"osal_memory.h"
+	"osal_event.h"
+	"type.h"
+

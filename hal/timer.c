@@ -28,12 +28,12 @@ static pthread_t hal_timer_pthread_fd;
  * @param pro       [线程函数参数列表]
  * @return void*    [无]
  */
-static void* hal_timer_pthread(void *pro)
+static void* hal_timer_pthread (void* pro)
 {
     pro = pro;
-    while(1)
+    while (1)
     {
-        usleep(10 * 1000);      //10ms的心跳
+        usleep (10 * 1000);     //10ms的心跳
         osal_update_timers();
     }
 
@@ -43,22 +43,22 @@ static void* hal_timer_pthread(void *pro)
 /**
  * @brief 硬件定时器初始化，设定系统时钟
  */
-void OSAL_TIMER_TICKINIT(void)
+void OSAL_TIMER_TICKINIT (void)
 {
     //创建定时器线程，使用线程来模拟定时器
-    int ret = pthread_create(&hal_timer_pthread_fd, NULL, hal_timer_pthread, NULL);
-    if(ret != 0)
+    int ret = pthread_create (&hal_timer_pthread_fd, NULL, hal_timer_pthread, NULL);
+    if (ret != 0)
     {
-        perror("Create hal timer error");
-        exit(1);
+        perror ("Create hal timer error");
+        exit (1);
     }
-    printf("Init hal timer ok !\n");
+    printf ("Init hal timer ok !\n");
 }
 
 /**
  * @brief 开启硬件定时器，OSAL会根据程序中软件定时器的实际使用动态开启和关闭，为空则一直开启
  */
-void OSAL_TIMER_TICKSTART(void)
+void OSAL_TIMER_TICKSTART (void)
 {
 
 }
@@ -66,7 +66,7 @@ void OSAL_TIMER_TICKSTART(void)
 /**
  * @brief 关闭硬件定时器，为空则一直不关闭
  */
-void OSAL_TIMER_TICKSTOP(void)
+void OSAL_TIMER_TICKSTOP (void)
 {
 
 }
