@@ -21,10 +21,12 @@ OSAL(operating system abstraction layer)，操作系统抽象层，是一种以�
 
 各API的使用可参考doc下的官方API手册《OSAL_API.pdf》。
 
-codeblocks移植
+原有版本是在linux+gcc下编译，移植到win10平台下。
+
+## codeblocks移植方法：
 1. 直接添加所有文件，添加include绝对路径，添加-pthread链接选项
 
-VS Express 2013 for Desktop移植
+## VS Express 2013 for Desktop移植：
 1. 直接添加所有文件，添加include路径
 2. 添加 winpthreads.h文件，以及条件编译
 3. vs编译器中有预编译宏_MSC_VER 代表编译器版本号
@@ -32,6 +34,14 @@ VS Express 2013 for Desktop移植
 5. https://docs.microsoft.com/zh-cn/cpp/preprocessor/predefined-macros?view=msvc-160
 6. http://locklessinc.com/downloads/
 7. https://blog.csdn.net/yapingxin/article/details/9131309
+
+## 查看gcc预定义宏的方法:
+
+1. 新建一个最简单的C文件test.c（其实任何C文件都可以），只有一行:
+2. int main(void) {}
+3. 在命令行执行如下命令：
+4. gcc -dM -E test.c > pre.txt
+5. 则会将预定义的宏输出到 pre.txt 文件中。
 
 ## 动态内存管理拓展说明
 
