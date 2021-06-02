@@ -21,6 +21,18 @@ OSAL(operating system abstraction layer)，操作系统抽象层，是一种以�
 
 各API的使用可参考doc下的官方API手册《OSAL_API.pdf》。
 
+codeblocks移植
+1. 直接添加所有文件，添加include绝对路径，添加-pthread链接选项
+
+VS Express 2013 for Desktop移植
+1. 直接添加所有文件，添加include路径
+2. 添加 winpthreads.h文件，以及条件编译
+3. vs编译器中有预编译宏_MSC_VER 代表编译器版本号
+4. 参考：
+5. https://docs.microsoft.com/zh-cn/cpp/preprocessor/predefined-macros?view=msvc-160
+6. http://locklessinc.com/downloads/
+7. https://blog.csdn.net/yapingxin/article/details/9131309
+
 ## 动态内存管理拓展说明
 
 OSAL中默认使用15位的数据标识管理内存，最大能管理32768字节，需要增加管理更多的动态内存可按照以下方式拓展：

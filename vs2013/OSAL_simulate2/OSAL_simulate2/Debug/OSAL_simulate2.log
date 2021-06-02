@@ -1,0 +1,21 @@
+﻿  timer.c
+d:\lm\test_demo\osal\hal\timer.c : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+d:\lm\test_demo\osal\hal\winpthreads.h(55): warning C4005: “ETIMEDOUT”: 宏重定义
+          d:\program files (x86)\microsoft visual studio 12.0\vc\include\errno.h(130) : 参见“ETIMEDOUT”的前一个定义
+d:\lm\test_demo\osal\hal\winpthreads.h(56): warning C4005: “ENOTSUP”: 宏重定义
+          d:\program files (x86)\microsoft visual studio 12.0\vc\include\errno.h(121) : 参见“ENOTSUP”的前一个定义
+d:\lm\test_demo\osal\hal\winpthreads.h(366): warning C4013: “pthread_rwlock_unlock”未定义；假设外部返回 int
+d:\lm\test_demo\osal\hal\winpthreads.h(409): warning C4013: “_endthreadex”未定义；假设外部返回 int
+d:\lm\test_demo\osal\hal\winpthreads.h(470): warning C4996: '_ftime64': This function or variable may be unsafe. Consider using _ftime64_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          d:\program files (x86)\microsoft visual studio 12.0\vc\include\sys\timeb.h(131) : 参见“_ftime64”的声明
+d:\lm\test_demo\osal\hal\winpthreads.h(754): warning C4101: “i”: 未引用的局部变量
+d:\lm\test_demo\osal\hal\winpthreads.h(754): warning C4101: “j”: 未引用的局部变量
+d:\lm\test_demo\osal\hal\winpthreads.h(810): warning C4013: “_beginthreadex”未定义；假设外部返回 int
+d:\lm\test_demo\osal\hal\winpthreads.h(960): warning C4244: “函数”: 从“unsigned __int64”转换到“DWORD”，可能丢失数据
+d:\lm\test_demo\osal\hal\winpthreads.h(1166): warning C4018: “>”: 有符号/无符号不匹配
+d:\lm\test_demo\osal\hal\winpthreads.h(1173): warning C4018: “>”: 有符号/无符号不匹配
+d:\lm\test_demo\osal\hal\winpthreads.h(1184): warning C4018: “>=”: 有符号/无符号不匹配
+d:\lm\test_demo\osal\hal\winpthreads.h(1194): warning C4018: “>”: 有符号/无符号不匹配
+d:\lm\test_demo\osal\hal\winpthreads.h(1300): warning C4244: “函数”: 从“unsigned __int64”转换到“DWORD”，可能丢失数据
+d:\lm\test_demo\osal\osal\osal_timer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  OSAL_simulate2.vcxproj -> D:\lm\test_demo\osal\vs2013\OSAL_simulate2\Debug\OSAL_simulate2.exe

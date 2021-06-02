@@ -9,7 +9,11 @@
 #define TASK_NO_TASK              6
 #define MSG_BUFFER_NOT_AVAIL      7
 
+#if defined (_GCC_)
 typedef unsigned char       BOOL;
+#elif defined (_MSC_VER)
+typedef unsigned char       u8bool;
+#endif
 
 //芯片硬件字长
 typedef unsigned int        halDataAlign_t;

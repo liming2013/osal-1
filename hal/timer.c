@@ -10,8 +10,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#if defined( _GCC_)
 #include <unistd.h>
 #include <pthread.h>
+#elif defined (_MSC_VER)
+#include "winpthreads.h"
+#endif
 
 #include "timer.h"
 #include "osal_timer.h"
@@ -20,9 +25,11 @@
 //即每次系统滴答心跳时调用一次osal_update_timers()
 
 //当前例程基于linux运行，使用线程休眠的方式模拟硬件定时器来实现心跳
-
+#if defined( _GCC_)
 static pthread_t hal_timer_pthread_fd;
-
+#elif defined (_MSC_VER)
+static pthread_t hal_timer_pthread_fd;	// this is our thread identifier
+#endif
 /**
  * @brief 定时器线程，为osal提供滴答心跳，在单片机平台应该使用硬件定时器实现
  * @param pro       [线程函数参数列表]
@@ -31,9 +38,14 @@ static pthread_t hal_timer_pthread_fd;
 static void* hal_timer_pthread (void* pro)
 {
     pro = pro;
+
     while (1)
     {
+#if defined( _GCC_)
         usleep (10 * 1000);     //10ms的心跳
+#elif defined (_MSC_VER)
+		Sleep(10);
+#endif
         osal_update_timers();
     }
 
@@ -45,13 +57,24 @@ static void* hal_timer_pthread (void* pro)
  */
 void OSAL_TIMER_TICKINIT (void)
 {
+	int ret = 0;
+#if defined( _GCC_)
     //创建定时器线程，使用线程来模拟定时器
-    int ret = pthread_create (&hal_timer_pthread_fd, NULL, hal_timer_pthread, NULL);
+    ret = pthread_create (&hal_timer_pthread_fd, NULL, hal_timer_pthread, NULL);
+#elif defined (_MSC_VER)
+	//创建定时器线程，使用线程来模拟定时器
+	ret = pthread_create(&hal_timer_pthread_fd, NULL, hal_timer_pthread, "processing...");
+#endif
+
+	/* wait for our thread to finish before continuing 添加导致死机 */
+	//pthread_join(hal_timer_pthread_fd, NULL /* void ** return value could go here */);
+
     if (ret != 0)
     {
         perror ("Create hal timer error");
         exit (1);
     }
+
     printf ("Init hal timer ok !\n");
 }
 
